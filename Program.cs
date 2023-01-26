@@ -2,7 +2,21 @@ using asp_master_job.Entities;
 using Microsoft.EntityFrameworkCore;
 using MySql.EntityFrameworkCore.Extensions;
 
+var policyName = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: policyName,
+                      builder =>
+                      {
+                          builder
+                            //.WithOrigins("http://localhost:3000")
+                            .AllowAnyOrigin()
+                            .WithMethods("GET")
+                            .AllowAnyHeader();
+                      });
+});
 
 // Add services to the container.
 builder.Services.AddEntityFrameworkMySQL()
@@ -24,6 +38,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(policyName);
 app.UseAuthorization();
 
 app.MapControllers();
